@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,8 +34,8 @@ public class IntQueueTest {
     @Before
     public void setUp() {
         // comment/uncomment these lines to test each class
-        mQueue = new LinkedIntQueue();
-//        mQueue = new ArrayIntQueue();
+        // mQueue = new LinkedIntQueue();
+        mQueue = new ArrayIntQueue();
 
         testList = new ArrayList<>(List.of(1, 2, 3));
     }
@@ -97,6 +98,57 @@ public class IntQueueTest {
             for (Integer result : correctResult) {
                 assertEquals(mQueue.dequeue(), result);
             }
+        }
+    }
+
+    @Test
+    public void testEnsureCapacity() {
+        // these test cases aim to create test cases that 
+        // queue tail index is before head index, and the queue is full at the same time
+        // Finally, enque and make it extend. 
+        List<Integer> enqueTestCases1 = Arrays.asList(0,1,2,3,4,5,6,7,8,9);
+        List<Integer> enqueTestCases2 = Arrays.asList(10,11,12,13,14,15,16,17,18,19);
+        List<Integer> answer = Arrays.asList(5,6,7,8,9,10,11,12,13,14,15,16,17,18,19);
+        // first enque 10 items;
+        enqueTestCases1.forEach(item -> {
+            mQueue.enqueue(item);
+        });
+        // deque 5 items;
+        int dequeTimes = 5;
+        while(dequeTimes-->0) {
+            mQueue.dequeue();
+        }
+        // add 10 items, force queue to extend
+        enqueTestCases2.forEach(item -> {
+            mQueue.enqueue(item);
+        });
+        answer.forEach(ans -> {
+            Integer temp = mQueue.dequeue();
+            assertEquals(temp, ans);
+        });
+
+        
+    }
+
+    @Test
+    public void testClear() {
+        testList.forEach(item -> mQueue.enqueue(item));
+        mQueue.clear();
+        assertTrue(mQueue.isEmpty());
+    }
+
+    @Test
+    public void testNullDeque() {
+        testList.forEach(item -> mQueue.enqueue(item));
+        for (int i = 0; i < testList.size(); i++) {
+            mQueue.dequeue();
+        }
+        int testTimes = 4;
+        while(testTimes-->0) {
+            Integer res = mQueue.dequeue();
+            assertNull(res);
+            res = mQueue.peek();
+            assertNull(res);
         }
     }
 
